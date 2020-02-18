@@ -1,0 +1,283 @@
+program TubesDAP;
+uses crt;
+type
+        driver = record
+                nama, jenis_kelamin, tempat_mangkal, jenis_motor : string;
+                umur :integer;
+        end;
+        history = record
+                nama_pesanan,Tempat_memesan, tujuan, nama_driver : String;
+                waktu_pesanan, total_bayar :Longint;
+        end;
+
+type    Datadriver = array [1..99] of driver;
+type    Datahistory = array [1..99] of history;
+
+var
+        arrDriver : Datadriver;
+        arrHistory : DataHistory;
+        arrHistoryMallA : DataHistory;
+        D : driver;
+        R : History;
+        cari : string;
+        cus, n, q : Integer;
+
+        function Uang(tempat_memesan, tujuan : string; waktu_pesanan : longint) : real;
+        begin
+                if ((waktu_pesanan >= 500) and (waktu_pesanan < 900) or (waktu_pesanan >= 1600 ) and (waktu_pesanan <= 1900)) then
+                begin
+                        if (tempat_memesan = 'Mall A') and (tujuan = 'Mall B') then
+                                Uang := 5*10
+                        else if (tempat_memesan = 'Mall B') and (tujuan = 'Mall A') then
+                                Uang := 6*12;
+                end
+                else if ((waktu_pesanan >= 900) and (waktu_pesanan <= 1200) or (waktu_pesanan > 1300) and (waktu_pesanan <= 1500)) then
+                begin
+                        if (tempat_memesan = 'Mall A') and (tujuan = 'Mall B') then
+                                Uang := 10*6
+                        else if (tempat_memesan = 'Mall B') and (tujuan = 'Mall A')  then
+                                Uang := 12*7;
+                end
+                else
+                        Uang := 0;
+        end;
+        procedure Buatdata(var D : datadriver);
+        begin
+                clrscr;
+                writeln('Selamat Datang di Menu Daftar Diri Driver');
+                writeln('___________________________________________');
+                writeln('Silahkan masukkan data diri anda : ');
+                writeln;
+                q := q + 1;
+                write('Nama : ');readln(D[q].nama);
+                write('Jenis Kelamin : ');readln(D[q].jenis_kelamin);
+                write('Tempat Mangkal : ');readln(D[q].tempat_mangkal);
+                write('Jenis Motor : ');readln(D[q].jenis_motor);
+                write('Umur : ');readln(D[q].umur);
+                writeln;
+        end;
+        procedure IsiDataPemesan(var H : dataHistory; D : datadriver);
+	var
+		found: Boolean;
+                i : integer;
+	begin
+		clrscr;
+		found := false;
+		n := n + 1;
+                writeln;
+		writeln('Silahkan Isi Data Diri Anda');
+                writeln;
+                write('Nama : ');readln(H[n].nama_pesanan);
+                write('Tempat Memesan : ');readln(H[n].Tempat_memesan);
+                write('Tujuan Mall    : ');readln(H[n].tujuan);
+                write('Waktu Pesan    : ');readln(H[n].waktu_pesanan);
+                writeln;
+                if H[n].tempat_memesan<>H[n].tujuan then
+                begin
+        	        for i := 1 to q do
+        	        begin
+                                if (H[n].tempat_memesan = D[i].tempat_mangkal) then
+                                begin
+                                        if (Uang(H[n].tempat_memesan,H[n].tujuan,H[n].waktu_pesanan)) <> 0 then
+    				        begin
+    					        clrscr;
+    					        found := true;
+	    				        writeln('============== DRIVER DITEMUKAN ===============');
+	    				        writeln;
+	    				        writeln('Nama : ',D[i].nama);
+	    				        writeln('Umur : ',D[i].umur);
+	    				        writeln('Jenis Kelamin : ',D[i].jenis_kelamin);
+	    				        writeln('Tempat Mangkal : ',D[i].tempat_mangkal);
+	    				        writeln('Jenis Motor    : ',D[i].jenis_motor);
+                                                write('Total Biaya    : Rp.',Uang(H[n].tempat_memesan,H[n].tujuan,H[n].waktu_pesanan):0:0,'.000');
+                                                H[n].nama_driver:= D[i].nama;
+     					        readln;
+                                        end
+                                        else
+    				        begin
+	    				        writeln('MAAF UNTUK SAAT INI KAMI BELUM BISA MELAYANI ANDA');
+	    				        n:= n - 1;
+	    				        readln;
+    				        end;
+	        	        end
+	        	        else if ((i = q )and(found = false)) then
+	        	        begin
+	        		        writeln('TIDAK ADA DRIVER TERDEKAT');
+	        		        n := n-1;
+	        		        readln;
+	        	        end;
+        	        end;
+                end
+                else
+                begin
+    		        n := n-1;
+        	        readln;
+                end;
+        end;
+        procedure Riwayat(var H : dataHistory);
+        var
+                i : integer;
+        begin
+                clrscr;
+                writeln('HISTORI PEMESANAN ANDA');
+                writeln;
+                for i := 1 to n do
+                begin
+                        writeln('Nama : ',H[i].nama_pesanan);
+                        writeln('Tempat Memesan : ',H[i].tempat_memesan);
+                        writeln('Tujuan : ',H[i].tujuan);
+                        writeln('Waktu Pesan : ',H[i].waktu_pesanan);
+                        writeln('Nama Driver : ',H[i].nama_driver);
+                        write('Total Biaya   : Rp.',Uang(H[i].tempat_memesan,H[i].tujuan,H[i].waktu_pesanan):0:0,'.000');
+                        writeln;
+                        writeln;
+                end;
+                readln;
+        end;
+
+        procedure carinama(var H : datahistory);
+        var
+                nama : string;
+                found :Boolean;
+                i : integer;
+        begin
+                clrscr;
+                found := false;
+                writeln;
+                if n >= 1 then
+                begin
+                        write('Cari Nama : ');readln(nama);
+                        for i := 1 to n do
+                        begin
+                                if nama = H[i].nama_pesanan then
+                                begin
+                                        found := true;
+                                        writeln('Nama : ',H[i].nama_pesanan);
+                                        writeln('Tempat memesan : ',H[i].tempat_memesan);
+                                        writeln('Tujuan : ',H[i].tujuan);
+                                        writeln('Waktu Pesan : ',H[i].waktu_pesanan);
+                                        writeln('Nama Driver : ',H[i].nama_driver);
+                                        write('Total Biaya : Rp.',Uang(H[i].tempat_memesan,H[i].tujuan,H[i].waktu_pesanan):0:0,'.000');
+                                        writeln;
+                                        writeln;
+                                end;
+                        end;
+                end;
+                readln;
+        end;
+        procedure MallA(var H : datahistory);
+        var
+                x, i,j, t: Integer;
+                temp : history;
+        begin
+                clrscr;
+                for i := n downto 2 do
+                begin
+                        for j := 1 to i-1 do
+                        begin
+                                if H[j].tujuan > H[j+1].tujuan then
+                                begin
+                                        temp := H[j+1];
+                                        H[j+1] := H[j];
+                                        H[j] := temp
+                                end;
+                        end;
+                end;
+                t := 1;
+                x := 0;
+                while t <= n do
+                begin
+                        if H[t].tujuan = 'Mall A' then
+                        begin
+                                x := x + 1;
+                                t := t + 1;
+                        end
+                        else
+                                t := t + 1;
+                end;
+                for i:= x downto 2 do
+                begin
+                        for j:=1 to i-1 do
+                        begin
+                                if H[j].nama_driver > H[j+1].nama_driver then
+                                begin
+                                        temp:= H[j+1];
+                                        H[j+1]:= H[j];
+                                        H[j]:= temp;
+                                end;
+                        end;
+                end;
+                for i := 1 to x do
+                begin
+                        writeln('Nama : ',H[i].nama_pesanan);
+                        writeln('Tempat Memesan : ',H[i].tempat_memesan);
+                        writeln('Tujuan : ',H[i].tujuan);
+                        writeln('Waktu Pesan : ',H[i].waktu_pesanan);
+                        writeln('Nama Driver : ',H[i].nama_driver);
+                        write('Total Biaya   : Rp.',Uang(H[i].tempat_memesan,H[i].tujuan,H[i].waktu_pesanan):0:0,'.000');
+                        writeln;
+                        writeln;
+                end;
+                readln;
+        end;
+        procedure MenuRiwayat;
+        begin
+                writeln('MENU RIWAYAT TRANSAKSI');
+                writeln('1. Riwayat Transaksi');
+                writeln('2. Riwayat Transaksi Pengguna');
+                writeln('3. Riwayat Transaksi Mall A');
+                write('Pilih Pilihan anda : ');readln(cus);
+                case cus of
+                        1 :
+                        begin
+                                Riwayat(arrHistory);
+                        end;
+                        2 :
+                        begin
+                                carinama(arrHistory);
+                        end;
+                        3 :
+                        begin
+                                MallA(arrHistory);
+                        end;
+                end;
+        end;
+
+begin
+        while true do
+        begin
+        clrscr;
+                writeln('SELAMAT DATANG DI APLIKASI MALL OJEK ONLINE');
+                writeln('1. Daftar Driver');
+                writeln('2. Pesan Ojek ');
+                writeln('3. Riwayat Transaksi ');
+                writeln('4. Keluar ');
+                write('Pilih pilihan anda : ');readln(cus);
+                case cus of
+                        1 :
+                        begin
+                                clrscr;
+                                BuatData(arrDriver);
+                        end;
+                        2 :
+                        begin
+                                clrscr;
+                                isidatapemesan(arrHistory,arrdriver);
+                        end;
+                        3 :
+                        begin
+                                if (n > 0) then
+                                begin
+                                        clrscr;
+                                        menuRiwayat;
+                                end
+                                else
+                                        writeln('Belum ada Riwayat Transaksi');
+                        end;
+                        4 : halt(1);
+                        end;
+        end;
+end.
+
+
+
